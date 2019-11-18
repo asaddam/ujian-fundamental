@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Ujian Fundamental JC11</title>
+    <style>
+    table, tr, td{
+            border: 2px solid black;
+            border-collapse: collapse;
+            padding: 10px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <center>
+        Username:   <input type="text" name="user" id="user">
+        <br>
+        <br>
+        Password:   <input type="text" name="pass" id="pass">
+        <br>
+        <input type="button" value="Login" onclick="login()">
+        <br>
+        <table>
+            <thead>
+                <tr>
+                    <td>No</td>
+                    <td>Kegiatan</td>
+                    <td>Hari</td>
+                    <td>Poster</td>
+                    <td>Act</td>
+                </tr>
+            </thead>
+            <tbody id="daftarMadding">
+
+            </tbody>
+        </table>
+        <h1 id="printUsername">
+
+        </h1>
+        <h3 id="logout">
+
+        </h3>
+    </center>
+    
+    <script>
+        class dataUser{
+            constructor(username, password, role){
+                this.username = username,
+                this.password = password,
+                this.role = role
+            }
+        }
+        class madding{
+            constructor(kegiatan, hari, poster){
+                this.kegiatan = kegiatan,
+                this.hari = hari,
+                this.poster = poster
+            }
+        }
+        
+        var user = [new dataUser('dino', 'dinosaurus', 'user'),
+                    new dataUser('admin', 'password', 'admin')]
+        var dataMadding = [new madding('lari', 'Senin', 'https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,q_auto:best,w_640/v1531381934/gnxwixkdwgbrjnddpu3j.jpg'),
+                           new madding('estafet', 'Selasa', 'https://moondoggiesmusic.com/wp-content/uploads/2019/07/Teknik-Lari-Estafet.png')]
+
+        function login(){
+            var id = document.getElementById('user').value;
+            var pass = document.getElementById('pass').value;
+            if(id === user[1].username && pass === user[1].password){
+                printAdmin()
+                document.getElementById('printUsername').innerHTML = id
+            }else if(id === user[0].username && pass === user[0].password){
+                printUser()
+                document.getElementById('printUsername').innerHTML = id
+            }else{
+                document.getElementById('printUsername').innerHTML = 'Password Salah'
+            }
+        }
+
+        function printAdmin(){
+            var output = ''
+            var keluar = `<input type="button" value="Log Out" onclick="keluar()">`
+            for(var i=0; i<dataMadding.length; i++){
+                output += `<tr id=${i}>
+                            <td>${i+1}</td>
+                            <td>${dataMadding[i].kegiatan}</td>
+                            <td>${dataMadding[i].hari}</td>
+                            <td><img src="${dataMadding[i].poster}" alt='foto kegiatan' width="100px"></td>
+                            <td id="act${i}"><input type="button" value="Delete" onclick="hapus(${i})">
+                                <input type="button" value="Edit" onclick="edit(${i})"></td>
+                            </tr>`
+            }
+            output += `
+                <tr>
+                    <td></td>
+                    <td><input type="text"  name="kegiatan" id="kegiatan"></td>
+                    <td><select id="option">
+                        <option value="senin">Senin</option>
+                        <option value="selasa">Selasa</option>
+                        <option value="rabu">Rabu</option>
+                        <option value="kamis">Kamis</option>
+                        <option value="jumat">Jumat</option>
+                        <option value="sabtu">Sabtu</option>
+                        <option value="minggu">Minggu</option>
+                        </select></td>
+                    <td><input type="text" name="poster" id="poster"></td>
+                    <td><input type="button" name="addtodo" value="Add todo" onclick="addtodo(${i})"></td>
+                </tr>`
+            document.getElementById('daftarMadding').innerHTML = output
+            document.getElementById('logout').innerHTML = keluar
+        }
+
+        function printUser(){
+            var output = ''
+            var keluar = `<input type="button" value="Log Out" onclick="keluar()">`
+            for(var i=0; i<dataMadding.length; i++){
+                output += `<tr ${i}>
+                            <td>${i+1}</td>
+                            <td>${dataMadding[i].kegiatan}</td>
+                            <td>${dataMadding[i].hari}</td>
+                            <td><img src="${dataMadding[i].poster}" alt='foto kegiatan' width="100px"></td>
+                            <td></td>
+                            </tr>`
+            }
+            document.getElementById('daftarMadding').innerHTML = output
+            document.getElementById('logout').innerHTML = keluar 
+        }
+
+        function addtodo(index){
+            var newKegiatan = document.getElementById('kegiatan').value;
+            var newHari = document.getElementById('option');
+            var newPoster = document.getElementById('poster').value;
+            for(var i=0; i<newHari.length; i++){
+                if(newHari[i].selected){
+                    newHari = newHari[i].value;
+                }
+            }
+            dataMadding.push(new madding(newKegiatan, newHari, newPoster))
+            if(newKegiatan === '' || newHari == '' || newPoster == ''){
+                return alert('Tolong isi seluruh input!')
+            }
+            printAdmin()
+        }
+
+        function hapus(index){
+            var act = `<input type="button" value="Yes" onclick="yes(${index})">
+                    <input type="button" value="No" onclick="No()">`
+            document.getElementById(`act${index}`).innerHTML = act
+        }
+        function yes(index){
+            dataMadding.splice(index, 1)
+            printAdmin()
+        }
+        function No(){
+            printAdmin()
+        }
+
+        function edit(index){
+            printAdmin()
+            var output = `
+                        <tr id="${index}">
+                            <td>${index+1}</td>
+                            <td><input type="text" name="Kegiatan" id="editKegiatan"></td>
+                            <td><select id="editOption">
+                                <option value="senin">Senin</option>
+                                <option value="selasa">Selasa</option>
+                                <option value="rabu">Rabu</option>
+                                <option value="kamis">Kamis</option>
+                                <option value="jumat">Jumat</option>
+                                <option value="sabtu">Sabtu</option>
+                                <option value="minggu">Minggu</option>
+                                </select></td>
+                            <td><input type="text" name="Poster" id="editPoster"></td>
+                            <td><input type="button" value="Save" onclick="save(${index})">
+                                <input type="button" value="Cancel" onclick="cancel(${index})"</td>
+                        </tr>`  
+            document.getElementById(`${index}`).innerHTML = output
+        }
+        function save(index){
+            var saveAct = document.getElementById('editKegiatan').value;
+            var saveDay = document.getElementById('editOption');
+            var savePoster = document.getElementById('editPoster').value;
+            for(var i=0; i<saveDay.length; i++){
+                if(saveDay[i].selected){
+                    saveDay = saveDay[i].value;
+                }
+            }
+            dataMadding[index] = new madding(saveAct, saveDay, savePoster)
+            printAdmin()
+        }
+        function cancel(index){
+            printAdmin();
+        }
+
+        function keluar(){
+            document.getElementById('daftarMadding').innerHTML = ''
+            document.getElementById('printUsername').innerHTML = ''
+        }
+    </script>
+</body>
+</html>
